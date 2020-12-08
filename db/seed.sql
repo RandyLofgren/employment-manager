@@ -41,7 +41,7 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Mike", "Smith", 2, 0);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Steve", "Webs", 3, 1);
+VALUES ("Steve", "Webs", 3, 2);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Timmy", "Johnson", 4, 0);
@@ -50,10 +50,10 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Rick", "Roads", 5, 0);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Donald", "Stevens", 6, 0);
+VALUES ("Donald", "Stevens", 6, 3);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Jimmy", "Punts", 7, 1);
+VALUES ("Jimmy", "Punts", 7, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Michelle", "Wilson", 8, 0);
