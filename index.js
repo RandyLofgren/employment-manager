@@ -73,9 +73,6 @@ const startUp = () => {
                 case 'Update employee managers':
                     updateEmpMan()
                     break;
-                case 'Remove employee':
-                    removeEmp()
-                    break;
                 case 'View employees by manager':
                     viewEmpByMan()
                     break;
@@ -126,8 +123,6 @@ function addRole() {
         },
         function (err, res) {
             if (err) throw err;
-
-
             viewRole();
         }
     );
@@ -191,9 +186,7 @@ function updateEmpRoles() {
         ],
         function (err, res) {
             if (err) throw err;
-
             viewEmp();
-
         }
     );
 }
@@ -213,16 +206,12 @@ function updateEmpMan() {
         ],
         function (err, res) {
             if (err) throw err;
-
             viewEmp();
-
         }
     );
 }
 
-function removeEmp() {
 
-}
 
 function viewEmpByMan() {
 
@@ -237,8 +226,6 @@ function deleteDept() {
         },
         function (err, res) {
             if (err) throw err;
-
-
             viewDept();
         }
     );
@@ -254,8 +241,6 @@ function deleteRole() {
         },
         function (err, res) {
             if (err) throw err;
-
-
             viewRoles();
         }
     );
@@ -272,8 +257,6 @@ function deleteEmp() {
         },
         function (err, res) {
             if (err) throw err;
-
-
             viewEmp();
         }
     );
