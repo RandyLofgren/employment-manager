@@ -6,10 +6,10 @@ var connection = mysql.createConnection({
 
     port: 3306,
 
-   
+
     user: "root",
 
-    
+
     password: "",
     database: "employmentdb"
 });
@@ -23,7 +23,7 @@ connection.connect(function (err) {
 
 
 const startUp = () => {
-    inquirer.prompt([                 
+    inquirer.prompt([
         {
             type: 'list',
             message: 'What would you like to do?',
@@ -43,53 +43,53 @@ const startUp = () => {
                 'Delete role',
                 'Delete employee',
                 'View department budget',
-            ],  
+            ],
         },
 
     ])
         .then((data) => {
             switch (data.type) {
-                case 'View employees':
-                    viewEmp()             
+                case 'Add department':
+                    addDept()
                     break;
                 case 'Add role':
-                    addRole()             
+                    addRole()
                     break;
                 case 'Add employee':
-                    addEmp()             
+                    addEmp()
                     break;
                 case 'View departments':
-                    viewDept()             
+                    viewDept()
                     break;
                 case 'View roles':
-                    viewRoles()             
+                    viewRoles()
                     break;
                 case 'View employees':
-                    viewEmp()             
+                    viewEmp()
                     break;
-                    case 'Update employee roles':
-                    updateEmpRoles()            
+                case 'Update employee roles':
+                    updateEmpRoles()
                     break;
                 case 'Update employee managers':
-                    updateEmpMan()             
+                    updateEmpMan()
                     break;
                 case 'Remove employee':
-                    removeEmp()             
+                    removeEmp()
                     break;
                 case 'View employees by manager':
-                    viewEmpByMan()             
+                    viewEmpByMan()
                     break;
                 case 'Delete department':
-                    deleteDept()             
+                    deleteDept()
                     break;
                 case 'Delete role':
-                    deleteRole()             
+                    deleteRole()
                     break;
                 case 'Delete employee':
-                    deleteEmp()            
+                    deleteEmp()
                     break;
                 default:
-                    viewBudgets()         
+                    viewBudgets()
                     break;
             }
         })
@@ -98,30 +98,188 @@ const startUp = () => {
 
 
 
-viewEmp()            
+function addDept() {
+    console.log("Inserting a new department...\n");
+    connection.query(
+        "INSERT INTO department SET ?",
+        {
+            name: "marketing",                  //need to fix this to call something with inquirer?
+        },
+        function (err, res) {
+            if (err) throw err;
 
-addRole()             
 
-addEmp()             
+            viewDept();
+        }
+    );
 
-viewDept()             
+}
 
-viewRoles()             
+function addRole() {
+    console.log("Inserting a new role...\n");
+    connection.query(
+        "INSERT INTO role SET ?",
+        {
+            title: "marketing manager",                  //need to fix this to call something with inquirer?
+            salary: 92045,                  //need to fix this to call something with inquirer?
+            department_id: 5,                  //need to fix this to call something with inquirer?
+        },
+        function (err, res) {
+            if (err) throw err;
 
-viewEmp()             
 
-updateEmpRoles()        
+            viewRole();
+        }
+    );
+}
 
-updateEmpMan()          
+function addEmp() {
+    console.log("Inserting a new employee...\n");
+    connection.query(
+        "INSERT INTO employee SET ?",
+        {
+            first_name: "FirstName",                  //need to fix this to call something with inquirer?
+            last_name: "LastName",
+            role_id: 5,
+            manager_id: 5
+        },
+        function (err, res) {
+            if (err) throw err;
+            viewEmp();
+        }
+    );
+}
 
-removeEmp()             
+function viewDept() {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
+        connection.end();
+    });
+}
 
-viewEmpByMan()          
+function viewRoles() {
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
+        connection.end();
+    });
+}
 
-deleteDept()            
+function viewEmp() {
+    connection.query("SELECT * FROM employee", function (err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.table(res);
+        connection.end();
+    });
+}
 
-deleteRole()            
+function updateEmpRoles() {
+    console.log("Updating employee role...\n");
+    connection.query(
+        "UPDATE employee SET ? WHERE ?",
+        [
+            {
+                role_id: 4     //Need to add inquirer
+            },
+            {
+                id: "19"     ///Need to add inquirer
+            }
+        ],
+        function (err, res) {
+            if (err) throw err;
 
-deleteEmp()             
+            viewEmp();
 
-viewBudgets()         
+        }
+    );
+}
+
+
+function updateEmpMan() {
+    console.log("Updating employee manager...\n");
+    connection.query(
+        "UPDATE employee SET ? WHERE ?",
+        [
+            {
+                manager_id: 4     //Need to add inquirer
+            },
+            {
+                id: "19"     ///Need to add inquirer
+            }
+        ],
+        function (err, res) {
+            if (err) throw err;
+
+            viewEmp();
+
+        }
+    );
+}
+
+function removeEmp() {
+
+}
+
+function viewEmpByMan() {
+
+}
+
+function deleteDept() {
+    console.log("Deleting a department...\n");
+    connection.query(
+        "DELETE FROM department WHERE ?",
+        {
+            name: "marketing"
+        },
+        function (err, res) {
+            if (err) throw err;
+
+
+            viewDept();
+        }
+    );
+
+}
+
+function deleteRole() {
+    console.log("Deleting a role...\n");
+    connection.query(
+        "DELETE FROM role WHERE ?",
+        {
+            title: "marketing manager"
+        },
+        function (err, res) {
+            if (err) throw err;
+
+
+            viewRoles();
+        }
+    );
+
+
+}
+
+function deleteEmp() {
+    console.log("Deleting an employee...\n");
+    connection.query(
+        "DELETE FROM employee WHERE ?",
+        {
+            id: 19                          //Need to fix to ask in inquirer
+        },
+        function (err, res) {
+            if (err) throw err;
+
+
+            viewEmp();
+        }
+    );
+
+}
+
+function viewBudgets() {
+
+}      
