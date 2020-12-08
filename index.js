@@ -97,53 +97,106 @@ const startUp = () => {
 
 function addDept() {
     console.log("Inserting a new department...\n");
-    connection.query(
-        "INSERT INTO department SET ?",
+    inquirer.prompt([
         {
-            name: "marketing",                  //need to fix this to call something with inquirer?
-        },
-        function (err, res) {
-            if (err) throw err;
-
-
-            viewDept();
+            name: "name",
+            type: "input",
+            message: "What department would you like to add?"
         }
-    );
+    ]).then(deptAnswers => {
+        connection.query(
+            "INSERT INTO department set ?",deptAnswers,
+            function (err, res) {
+                if (err) throw err;
+                viewDept();
+            }
+        )
+    })
+    
 
 }
 
 function addRole() {
     console.log("Inserting a new role...\n");
-    connection.query(
-        "INSERT INTO role SET ?",
-        {
-            title: "marketing manager",                  //need to fix this to call something with inquirer?
-            salary: 92045,                  //need to fix this to call something with inquirer?
-            department_id: 5,                  //need to fix this to call something with inquirer?
-        },
-        function (err, res) {
-            if (err) throw err;
-            viewRole();
-        }
-    );
-}
+    connection.query("SELECT * from department;", (err, results) => {
+        if (err) console.log(err)
+        const deptList = results.map(dept => { return { name: dept.name, value: dept.id } })
 
+        inquirer.prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "What role title would you like to add?"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "What salary does this role make?"
+            },
+            {
+                name: "department_id",
+                type: "list",
+                message: "What department is this role in?",
+                choices: deptList
+            }
+
+        ]).then(roleAnswers => {
+
+            connection.query(
+                "INSERT INTO role SET ?", roleAnswers,
+                function (err, res) {
+                    if (err) throw err;
+                    viewRoles();
+                }
+            );
+        })
+    })
+
+};
 function addEmp() {
     console.log("Inserting a new employee...\n");
-    connection.query(
-        "INSERT INTO employee SET ?",
-        {
-            first_name: "FirstName",                  //need to fix this to call something with inquirer?
-            last_name: "LastName",
-            role_id: 5,
-            manager_id: 5
-        },
-        function (err, res) {
-            if (err) throw err;
-            viewEmp();
-        }
-    );
-}
+    connection.query("SELECT * from role;", (err, results) => {
+        if (err) console.log(err)
+        const roleList = results.map(role => { return { name: role.title, value: role.id } })
+        connection.query("SELECT * from employee;", (err, results) => {
+            if (err) console.log(err)
+            const empList = results.map(emp => { return { name: `${emp.first_name} ${emp.last_name}`, value: emp.id } })
+            inquirer.prompt([
+                {
+                    name: "first_name",
+                    type: "input",
+                    message: "What is the employees first name?"
+                },
+                {
+                    name: "last_name",
+                    type: "input",
+                    message: "What is the employees last name?"
+                },
+                {
+                    name: "role_id",
+                    type: "list",
+                    message: "What is the employees role?",
+                    choices: roleList
+                },
+                {
+                    name: "manager_id",
+                    type: "list",
+                    message: "Who is this employees manager?",
+                    choices: empList
+                }
+            ]).then(employeeAnswers => {
+
+                connection.query(
+                    "INSERT INTO employee SET ?", employeeAnswers,
+                    function (err, res) {
+                        if (err) throw err;
+                        viewEmp();
+                    }
+                );
+            })
+        })
+    })
+};
 
 function viewDept() {
     connection.query("SELECT * FROM department", function (err, res) {
@@ -173,6 +226,8 @@ function viewEmp() {
 }
 
 function updateEmpRoles() {
+
+
     console.log("Updating employee role...\n");
     connection.query(
         "UPDATE employee SET ? WHERE ?",
@@ -265,4 +320,4 @@ function deleteEmp() {
 
 function viewBudgets() {
 
-}      
+}   
