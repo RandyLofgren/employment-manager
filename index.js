@@ -212,9 +212,17 @@ function updateEmpRoles() {
                     choices: empUpList
                 }
             ]).then(empUpAnswers => {
-
+                    console.log(empUpAnswers)
                 connection.query(
-                    "UPDATE employee SET ? WHERE ?", [empUpAnswers[0],empUpAnswers[1]],
+                    "UPDATE employee SET ? WHERE ?", 
+                    [{
+                          role_id: empUpAnswers.role_id 
+                    },
+                     {
+                        
+                        id: empUpAnswers.id
+                     }
+                    ],
                     function (err, res) {
                         if (err) throw err;
                         viewEmp();
@@ -280,9 +288,6 @@ function deleteDept() {
         })
 
     })
-
-
-
 };
 
 function deleteRole() {
@@ -313,13 +318,6 @@ function deleteRole() {
 
 };
 
-
-
-
-
-
-
-
 function deleteEmp() {
     console.log("Deleting an employee...\n");
 
@@ -347,7 +345,4 @@ function deleteEmp() {
         })
 
     })
-
-
-
 };
