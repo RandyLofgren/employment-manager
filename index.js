@@ -36,13 +36,10 @@ const startUp = () => {
                 'View roles',
                 'View employees',
                 'Update employee roles',
-                'Update employee managers',
-                'Remove employee',
-                'View employees by manager',
                 'Delete department',
                 'Delete role',
                 'Delete employee',
-                'View department budget',
+
             ],
         },
 
@@ -69,12 +66,6 @@ const startUp = () => {
                     break;
                 case 'Update employee roles':
                     updateEmpRoles()
-                    break;
-                case 'Update employee managers':
-                    updateEmpMan()
-                    break;
-                case 'View employees by manager':
-                    viewEmpByMan()
                     break;
                 case 'Delete department':
                     deleteDept()
@@ -105,14 +96,14 @@ function addDept() {
         }
     ]).then(deptAnswers => {
         connection.query(
-            "INSERT INTO department set ?",deptAnswers,
+            "INSERT INTO department set ?", deptAnswers,
             function (err, res) {
                 if (err) throw err;
                 viewDept();
             }
         )
     })
-    
+
 
 }
 
@@ -198,6 +189,47 @@ function addEmp() {
     })
 };
 
+function updateEmpRoles() {
+    console.log("Updating employee role...\n");
+    connection.query("SELECT * from role;", (err, results) => {
+        if (err) console.log(err)
+        const roleUpList = results.map(role => { return { name: role.title, value: role.id } })
+        connection.query("SELECT * from employee;", (err, results) => {
+            if (err) console.log(err)
+            const empUpList = results.map(emp => { return { name: `${emp.first_name} ${emp.last_name}`, value: emp.id } })
+
+            inquirer.prompt([
+                {
+                    name: "role_id",
+                    type: "list",
+                    message: "What new role would you like to assign this employee?",
+                    choices: roleUpList
+                },
+                {
+                    name: "id",
+                    type: "list",
+                    message: "Which employee would you like to update?",
+                    choices: empUpList
+                }
+            ]).then(empUpAnswers => {
+
+                connection.query(
+                    "UPDATE employee SET ? WHERE ?", [empUpAnswers[0],empUpAnswers[1]],
+                    function (err, res) {
+                        if (err) throw err;
+                        viewEmp();
+                    }
+                );
+            })
+
+        })
+    })
+
+
+};
+
+
+
 function viewDept() {
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err;
@@ -225,99 +257,97 @@ function viewEmp() {
     });
 }
 
-function updateEmpRoles() {
-
-
-    console.log("Updating employee role...\n");
-    connection.query(
-        "UPDATE employee SET ? WHERE ?",
-        [
-            {
-                role_id: 4     //Need to add inquirer
-            },
-            {
-                id: "19"     ///Need to add inquirer
-            }
-        ],
-        function (err, res) {
-            if (err) throw err;
-            viewEmp();
-        }
-    );
-}
-
-
-function updateEmpMan() {
-    console.log("Updating employee manager...\n");
-    connection.query(
-        "UPDATE employee SET ? WHERE ?",
-        [
-            {
-                manager_id: 4     //Need to add inquirer
-            },
-            {
-                id: "19"     ///Need to add inquirer
-            }
-        ],
-        function (err, res) {
-            if (err) throw err;
-            viewEmp();
-        }
-    );
-}
-
-
-
-function viewEmpByMan() {
-
-}
-
 function deleteDept() {
     console.log("Deleting a department...\n");
-    connection.query(
-        "DELETE FROM department WHERE ?",
-        {
-            name: "marketing"
-        },
-        function (err, res) {
-            if (err) throw err;
-            viewDept();
-        }
-    );
+    connection.query("SELECT * from department;", (err, results) => {
+        if (err) console.log(err)
+        const deptDelList = results.map(dept => { return { name: dept.name, value: dept.id } })
+        inquirer.prompt([
+            {
+                name: "id",
+                type: "list",
+                message: "Which department would you like to delete?",
+                choices: deptDelList
+            },
+        ]).then(deptDelAnswers => {
+            connection.query(
+                "DELETE FROM department WHERE ?", deptDelAnswers,
+                function (err, res) {
+                    if (err) throw err;
+                    viewDept();
+                }
+            );
+        })
 
-}
+    })
+
+
+
+};
 
 function deleteRole() {
     console.log("Deleting a role...\n");
-    connection.query(
-        "DELETE FROM role WHERE ?",
-        {
-            title: "marketing manager"
-        },
-        function (err, res) {
-            if (err) throw err;
-            viewRoles();
-        }
-    );
+    connection.query("SELECT * from role;", (err, results) => {
+        if (err) console.log(err)
+        const roleDelList = results.map(role => { return { name: role.title, value: role.id } })
+        inquirer.prompt([
+            {
+                name: "id",
+                type: "list",
+                message: "Which role would you like to delete?",
+                choices: roleDelList
+            },
+        ]).then(roleDelAnswers => {
+            connection.query(
+                "DELETE FROM role WHERE ?", roleDelAnswers,
+                function (err, res) {
+                    if (err) throw err;
+                    viewRoles();
+                }
+            );
+        })
+
+    })
 
 
-}
+
+};
+
+
+
+
+
+
+
 
 function deleteEmp() {
     console.log("Deleting an employee...\n");
-    connection.query(
-        "DELETE FROM employee WHERE ?",
-        {
-            id: 19                          //Need to fix to ask in inquirer
-        },
-        function (err, res) {
-            if (err) throw err;
-            viewEmp();
-        }
-    );
 
-}
+    connection.query("SELECT * from employee;", (err, results) => {
+        if (err) console.log(err)
+        const empDelList = results.map(emp => { return { name: `${emp.first_name} ${emp.last_name}`, value: emp.id } })
 
-function viewBudgets() {
+        inquirer.prompt([
 
-}   
+            {
+                name: "id",
+                type: "list",
+                message: "Which employee would you like to update?",
+                choices: empDelList
+            }
+        ]).then(empDelAnswers => {
+
+            connection.query(
+                "DELETE from employee WHERE ?", empDelAnswers,
+                function (err, res) {
+                    if (err) throw err;
+                    viewEmp();
+                }
+            );
+        })
+
+    })
+
+
+
+};
